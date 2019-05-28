@@ -1,0 +1,71 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+using namespace std;
+int main()
+{
+    const size_t MAX_SIZE = 256;
+    const char* symbols = "*<>?|:/\"";
+    char text[MAX_SIZE];
+    cout << "Enter filename" << '\n';
+    fgets(text,MAX_SIZE,stdin); //ввод имени файла в массив text
+    char* filename = text; //присвоение переменной массиву
+    filename[strlen(filename) - 1] = '\0'; //
+    while(true)
+    {
+        if(strcspn(filename,symbols) == strlen(filename));//проверка на запретные символы, методом сравнения длинн до первого вхождения и полной длины
+        else
+        {
+            cout << "Oshibka vvoda";
+            break;
+        }
+        if(strrchr(filename,'.') == nullptr)//сравниваем число вхождений точки в назваение файла с нулем и в случае равенства
+        {
+            std::string filename;
+            std::string txt = ".txt";
+            filename += txt;// добавляем разрешение .txt
+        }
+        /*else
+        {
+            char* ext = strrchr(filename,'.');//получили число точек в имени файла
+            for(int i = 1;ext[i] != '\0';i++)//
+                *(ext + i) = char(tolower(*(ext + i)));
+            if(strncmp(ext,".txt",4) == 0) ;//проверка на совпадение расширений файла
+            else
+            {
+                cout << "Oshibka voda";
+                break;
+            }
+        }*/
+        FILE* file = fopen(filename,"r+");
+        if (file == 0) break;
+        fseek(file,0,SEEK_END);//определяем размер файла
+        int file_size = ftell(file);
+        char* massive = new char[file_size];//создаем динамический массив под данный файл
+        fseek(file,0,SEEK_SET);
+        fread(massive,1,file_size,file);//загружаем содержимое файла в созданный массив
+        massive[file_size] = '\0';
+        char stroka[MAX_SIZE];
+        cout << "Enter stroka" << '\n';
+        fgets(stroka,MAX_SIZE,stdin);
+        char* str = stroka;
+        *(str + strlen(str) - 1) = '\0';
+        int chislo = 0;
+        while(*massive != '\0')
+        {
+            if(strncmp(massive,str,strlen(str)) != 0)
+                massive += 1;
+            else
+            {
+                chislo ++;
+                massive += 1;
+            }
+        }
+        cout << "Chislo vhozdenyi " << chislo << '\n';
+        delete[] massive;
+        fclose(file);
+        break;
+    }
+    return 0;
+}
